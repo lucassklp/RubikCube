@@ -12,13 +12,13 @@ using Tao.OpenGl;
 
 namespace RubikCube
 {
-    public partial class Form1 : Form
+    public partial class RubikCubeForm : Form
     {
         Timer timer;
 
         RubiksCube rubiksCube;
 
-        public Form1()
+        public RubikCubeForm()
         {
             InitializeComponent();
             this.timer = new Timer();
@@ -51,31 +51,14 @@ namespace RubikCube
             this.OpenGlControl.Invalidate();
         }
 
+        public void Manipulate(RubikCubeMoviment moviment)
+        {
+            rubiksCube.Manipulate(moviment);
+        }
+
+
         private void OpenGlControl_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.NumPad1)
-            {
-                var moviment = new RubikCubeMoviment(Depth.Third, Spin.Clockwise, Axis.X);
-                rubiksCube.Manipulate(moviment);
-            }
-            if(e.KeyCode == Keys.NumPad0)
-            {
-                var moviment = new RubikCubeMoviment(Depth.Second, Spin.Anticlockwise, Axis.X);
-                rubiksCube.Manipulate(moviment);
-            }
-            if(e.KeyCode == Keys.NumPad2)
-            {
-                var moviment = new RubikCubeMoviment(Depth.First, Spin.Anticlockwise, Axis.Y);
-                rubiksCube.Manipulate(moviment);
-            }
-
-            if (e.KeyCode == Keys.NumPad3)
-            {
-                var moviment = new RubikCubeMoviment(Depth.First, Spin.Anticlockwise, Axis.Z);
-                rubiksCube.Manipulate(moviment);
-            }
-
-
             if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
             {
                 rubiksCube.Rotate(0, 5, 0);

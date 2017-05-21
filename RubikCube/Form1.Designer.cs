@@ -1,6 +1,6 @@
 ﻿namespace RubikCube
 {
-    partial class Form1
+    partial class RubikCubeForm
     {
         /// <summary>
         /// Required designer variable.

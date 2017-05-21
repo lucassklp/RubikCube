@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RubikCube
 {
-    enum Depth
+    public enum Depth
     {
         First,
         Second,

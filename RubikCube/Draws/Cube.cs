@@ -104,10 +104,11 @@ namespace RubikCube.Draws
             Gl.glPopMatrix();
         }
 
-        internal void Place(RubikCubeMoviment moviment)
+        public void Place(RubikCubeMoviment moviment)
         {
             this.faceColors.Rotate(moviment);
             this.Transform(moviment);
+            this.ResetTransforms();
         }
 
         private void Transform(RubikCubeMoviment moviment)

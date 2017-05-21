@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RubikCube
 {
-    class RubikCubeMoviment
+    public class RubikCubeMoviment
     {
         public Depth Depth { get; private set; }
         public Spin Spin { get; private set; }

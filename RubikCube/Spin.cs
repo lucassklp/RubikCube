@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RubikCube
 {
-    enum Spin
+    public enum Spin
     {
         Clockwise,
         Anticlockwise

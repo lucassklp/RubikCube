@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RubikCube
 {
-    enum Axis
+    public enum Axis
     {
         X,
         Y,

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using Tao.OpenGl;
 
 namespace RubikCube.Draws
@@ -11,15 +12,32 @@ namespace RubikCube.Draws
     class RubiksCube : IDraw
     {
         List<Cube> composingCubes;
-        int AngleX, AngleY, AngleZ;
+        Queue<Animation> pendingAnimation;
+        Animation current;
 
+        int AngleX, AngleY, AngleZ;
 
         public RubiksCube()
         {
+            pendingAnimation = new Queue<Animation>();
             composingCubes = new List<Cube>();
-            composingCubes.Add(new Cube(1, 0, 0, 0));
 
-            double blockSpace = .73;
+
+            double blockSpace = .66;
+            for (double x = -blockSpace; x < 2 * blockSpace; x += blockSpace)
+            {
+                for (double y = -blockSpace; y < 2 * blockSpace; y += blockSpace)
+                {
+                    for (double z = -blockSpace; z < 2 * blockSpace; z += blockSpace)
+                    {
+                        var cubeColor = this.GenerateCubeColor(x, y, z);
+                        composingCubes.Add(new Cube(.33, x, y, z));
+                    }
+                }
+            }
+
+
+            blockSpace = .73;
             for (double x = -blockSpace; x < 2 * blockSpace; x += blockSpace)
             {
                 for (double y = -blockSpace; y < 2 * blockSpace; y += blockSpace)
@@ -100,12 +118,9 @@ namespace RubikCube.Draws
                     movimentingPieces = this.composingCubes.FindAll(pieces => pieces.X > 0);
                 }
 
+                Animation animation = new Animation(movimentingPieces, 90, moviment);
+                this.pendingAnimation.Enqueue(animation);
 
-                foreach (var item in movimentingPieces)
-                {
-                    item.Rotate(90, 0, 0);
-                    item.Place(moviment);
-                }
             }
             else if(moviment.Axis == Axis.Y)
             {
@@ -123,11 +138,8 @@ namespace RubikCube.Draws
                 }
 
 
-                foreach (var item in movimentingPieces)
-                {
-                    item.Rotate(0, 90, 0);
-                    item.Place(moviment);
-                }
+                Animation animation = new Animation(movimentingPieces, 90, moviment);
+                this.pendingAnimation.Enqueue(animation);
             }
             else if(moviment.Axis == Axis.Z)
             {
@@ -143,12 +155,8 @@ namespace RubikCube.Draws
                 {
                     movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Z < 0);
                 }
-
-                foreach (var item in movimentingPieces)
-                {
-                    item.Rotate(0, 0, 90);
-                    item.Place(moviment);
-                }
+                Animation animation = new Animation(movimentingPieces, 90, moviment);
+                this.pendingAnimation.Enqueue(animation);
             }
 
         }
@@ -163,10 +171,34 @@ namespace RubikCube.Draws
 
         public void Draw()
         {
+            DoAnimation();
             AdjustRotation();
             foreach (var item in composingCubes)
             {
                 item.Draw();
+            }
+        }
+
+        private void DoAnimation()
+        {
+            if(current == null)
+            {
+                if (this.pendingAnimation.Count > 0)
+                {
+                    this.current = this.pendingAnimation.Dequeue();
+                }
+                else return;
+            }
+            else
+            {
+                if (current.AnimationEnded)
+                {
+                    current = null;
+                }
+                else
+                {
+                    current.Animate();
+                }
             }
         }
 
