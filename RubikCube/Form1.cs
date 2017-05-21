@@ -18,9 +18,6 @@ namespace RubikCube
 
         RubiksCube rubiksCube;
 
-        double x, y, z;
-
-
         public Form1()
         {
             InitializeComponent();
@@ -41,7 +38,8 @@ namespace RubikCube
             Gl.glEnable(Gl.GL_CULL_FACE);
             Gl.glCullFace(Gl.GL_BACK);
 
-            Gl.glClearColor(255, 255, 255, 1);
+            //Gl.glClearColor()
+            Gl.glClearColor(.85f, .85f, .85f, 1);
             Gl.glClear(Gl.GL_CLEAR);
 
             rubiksCube = new RubiksCube();
@@ -55,21 +53,44 @@ namespace RubikCube
 
         private void OpenGlControl_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.D)
+            if(e.KeyCode == Keys.NumPad1)
             {
-                y -= 5;
+                var moviment = new RubikCubeMoviment(Depth.Third, Spin.Clockwise, Axis.X);
+                rubiksCube.Manipulate(moviment);
+            }
+            if(e.KeyCode == Keys.NumPad0)
+            {
+                var moviment = new RubikCubeMoviment(Depth.Second, Spin.Anticlockwise, Axis.X);
+                rubiksCube.Manipulate(moviment);
+            }
+            if(e.KeyCode == Keys.NumPad2)
+            {
+                var moviment = new RubikCubeMoviment(Depth.First, Spin.Anticlockwise, Axis.Y);
+                rubiksCube.Manipulate(moviment);
+            }
+
+            if (e.KeyCode == Keys.NumPad3)
+            {
+                var moviment = new RubikCubeMoviment(Depth.First, Spin.Anticlockwise, Axis.Z);
+                rubiksCube.Manipulate(moviment);
+            }
+
+
+            if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
+            {
+                rubiksCube.Rotate(0, 5, 0);
             }
             else if (e.KeyCode == Keys.A)
             {
-                y += 5;
+                rubiksCube.Rotate(0, -5, 0);
             }
             else if (e.KeyCode == Keys.W)
             {
-                x += 5;
+                rubiksCube.Rotate(-5, 0, 0);
             }
             else if (e.KeyCode == Keys.S)
             {
-                x -= 5;
+                rubiksCube.Rotate(5, 0, 0);
             }
         }
 
@@ -88,13 +109,7 @@ namespace RubikCube
             Gl.glPolygonMode(Gl.GL_BACK, Gl.GL_LINES);
 
             Gl.glTranslated(0, 0, -5);
-            Gl.glRotated(x, 1, 0, 0);
-            Gl.glRotated(y, 0, 1, 0);
-            Gl.glRotated(z, 0, 0, 1);
 
-
-            Cube mainCube = new Cube(1, 0, 0, 0);
-            mainCube.Draw();
             rubiksCube.Draw();
         }
 
@@ -102,6 +117,10 @@ namespace RubikCube
         {
             OpenGlControl.Width = this.Width;
             OpenGlControl.Height = this.Height;
+            Gl.glViewport(0, 0, this.Width, this.Height);
+            Gl.glMatrixMode(Gl.GL_PROJECTION);
+            Gl.glLoadIdentity();
+            Glu.gluPerspective(45.0f, (double)this.Width / (double)this.Height, 0.01f, 5000.0f);
         }
     }
 }

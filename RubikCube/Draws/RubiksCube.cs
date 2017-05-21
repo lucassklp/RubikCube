@@ -10,131 +10,178 @@ namespace RubikCube.Draws
 {
     class RubiksCube : IDraw
     {
-        List<Cube> draws;
+        List<Cube> composingCubes;
+        int AngleX, AngleY, AngleZ;
+
 
         public RubiksCube()
         {
-            draws = new List<Cube>();
+            composingCubes = new List<Cube>();
+            composingCubes.Add(new Cube(1, 0, 0, 0));
 
-            var cm1m1m1 = new FaceCubeColors();
-            cm1m1m1.Back = Color.Blue;
-            cm1m1m1.Bottom = Color.Yellow;
-            cm1m1m1.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, -.8, -.8, cm1m1m1));
-
-            var cm1m1p0 = new FaceCubeColors();
-            cm1m1p0.Bottom = Color.Yellow;
-            cm1m1p0.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, -.8, 0, cm1m1p0));
-
-            var cm1m1p1 = new FaceCubeColors();
-            cm1m1p1.Bottom = Color.Yellow;
-            cm1m1p1.Left = Color.Orange;
-            cm1m1p1.Front = Color.Green;
-            draws.Add(new Cube(.3, -.8, -.8, .8, cm1m1p1));
-
-            var cm1p0m1 = new FaceCubeColors();
-            cm1p0m1.Back = Color.Blue;
-            cm1p0m1.Bottom = Color.Yellow;
-            cm1p0m1.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, 0, -.8, cm1p0m1));
-
-            var cm1p0p0 = new FaceCubeColors();
-            cm1p0p0.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, 0, 0, cm1p0p0));
-
-            var cm1p0p1 = new FaceCubeColors();
-            cm1p0p1.Bottom = Color.Yellow;
-            cm1p0p1.Left = Color.Orange;
-            cm1p0p1.Front = Color.Green;
-            draws.Add(new Cube(.3, -.8, 0, .8, cm1p0p1));
-
-            var cm1p1m1 = new FaceCubeColors();
-            cm1p1m1.Back = Color.Blue;
-            cm1p1m1.Up = Color.White;
-            cm1p1m1.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, .8, -.8, cm1p1m1));
-
-            var cm1p1p0 = new FaceCubeColors();
-            cm1p1p0.Back = Color.Blue;
-            cm1p1p0.Up = Color.White;
-            cm1p1p0.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, .8, 0, cm1p1p0));
-
-            var cm1p1p1 = new FaceCubeColors();
-            cm1p1p1.Front = Color.Green;
-            cm1p1p1.Up = Color.White;
-            cm1p1p1.Left = Color.Orange;
-            draws.Add(new Cube(.3, -.8, .8, .8, cm1p1p1));
-
-
-            var cm0m1m1 = new FaceCubeColors();
-            cm0m1m1.Back = Color.Blue;
-            cm0m1m1.Bottom = Color.Yellow;
-            draws.Add(new Cube(.3, 0, -.8, -.8, cm0m1m1));
-
-            var cm0m1p0 = new FaceCubeColors();
-            cm0m1p0.Bottom = Color.Yellow;
-            draws.Add(new Cube(.3, 0, -.8, 0, cm0m1p0));
-
-
-
-            var cm0m1p1 = new FaceCubeColors();
-            cm0m1p1.Bottom = Color.Yellow;
-            cm0m1p1.Front = Color.Green;
-
-            var generic = new FaceCubeColors(Color.Green, Color.Blue, Color.White, Color.Yellow, Color.Orange, Color.Red);
-
-            draws.Add(new Cube(.3, 0, -.8, .8, generic));
-
-
-            draws.Add(new Cube(.3, 0, 0, -.8, generic));
-
-
-
-            draws.Add(new Cube(.3, 0, 0, 0, generic));
-            draws.Add(new Cube(.3, 0, 0, .8, generic));
-            draws.Add(new Cube(.3, 0, .8, -.8, generic));
-            draws.Add(new Cube(.3, 0, .8, 0, generic));
-            draws.Add(new Cube(.3, 0, .8, .8, generic));
-
-            draws.Add(new Cube(.3, .8, -.8, -.8, generic));
-            draws.Add(new Cube(.3, .8, -.8, 0, generic));
-            draws.Add(new Cube(.3, .8, -.8, .8, generic));
-            draws.Add(new Cube(.3, .8, 0, -.8, generic));
-            draws.Add(new Cube(.3, .8, 0, 0, generic));
-            draws.Add(new Cube(.3, .8, 0, .8, generic));
-            draws.Add(new Cube(.3, .8, .8, -.8, generic));
-            draws.Add(new Cube(.3, .8, .8, 0, generic));
-            draws.Add(new Cube(.3, .8, .8, .8, generic));
-
-
-
-
-
-            //for (int x = -1; x < 2; x++)
-            //{
-            //    for (int y = -1; y < 2; y++)
-            //    {
-            //        for (int z = -1; z < 2; z++)
-            //        {
-            //            draws.Add(new Cube(.8, x, y, z));
-            //        }
-            //    }
-            //}
+            double blockSpace = .73;
+            for (double x = -blockSpace; x < 2 * blockSpace; x += blockSpace)
+            {
+                for (double y = -blockSpace; y < 2 * blockSpace; y += blockSpace)
+                {
+                    for (double z = -blockSpace; z < 2 * blockSpace; z += blockSpace)
+                    {
+                        var cubeColor = this.GenerateCubeColor(x, y, z);
+                        composingCubes.Add(new Cube(.32, x, y, z, cubeColor));
+                    }
+                }
+            }
         }
 
-        public void Rotate()
+        private FaceCubeColors GenerateCubeColor(double x, double y, double z)
         {
+            var cubeColor = new FaceCubeColors(Color.Green, Color.Blue, Color.White, Color.Yellow, Color.Orange, Color.Red);
+
+            if (x < 0)
+            {
+                cubeColor.Right = Color.DarkGray;
+            }
+            if (x == 0)
+            {
+                cubeColor.Left = Color.DarkGray;
+                cubeColor.Right = Color.DarkGray;
+            }
+            if (x > 0)
+            {
+                cubeColor.Left = Color.DarkGray;
+            }
+            if (y < 0)
+            {
+                cubeColor.Top = Color.DarkGray;
+            }
+            if (y == 0)
+            {
+                cubeColor.Top = Color.DarkGray;
+                cubeColor.Bottom = Color.DarkGray;
+            }
+            if (y > 0)
+            {
+                cubeColor.Bottom = Color.DarkGray;
+            }
+            if (z < 0)
+            {
+                cubeColor.Front = Color.DarkGray;
+            }
+            if (z == 0)
+            {
+                cubeColor.Front = Color.DarkGray;
+                cubeColor.Back = Color.DarkGray;
+            }
+            if (z > 0)
+            {
+                cubeColor.Back = Color.DarkGray;
+            }
+
+            return cubeColor;
+        }
+
+        public void Manipulate(RubikCubeMoviment moviment)
+        {
+
+            List<Cube> movimentingPieces = new List<Cube>();
+
+            if (moviment.Axis == Axis.X)
+            {
+                if(moviment.Depth == Depth.First)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.X < 0);
+                }
+                else if(moviment.Depth == Depth.Second)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.X == 0);
+                }
+                else if (moviment.Depth == Depth.Third)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.X > 0);
+                }
+
+
+                foreach (var item in movimentingPieces)
+                {
+                    item.Rotate(90, 0, 0);
+                    item.Place(moviment);
+                }
+            }
+            else if(moviment.Axis == Axis.Y)
+            {
+                if (moviment.Depth == Depth.First)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Y > 0);
+                }
+                else if (moviment.Depth == Depth.Second)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Y == 0);
+                }
+                else if (moviment.Depth == Depth.Third)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Y < 0);
+                }
+
+
+                foreach (var item in movimentingPieces)
+                {
+                    item.Rotate(0, 90, 0);
+                    item.Place(moviment);
+                }
+            }
+            else if(moviment.Axis == Axis.Z)
+            {
+                if (moviment.Depth == Depth.First)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Z > 0);
+                }
+                else if (moviment.Depth == Depth.Second)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Z == 0);
+                }
+                else if (moviment.Depth == Depth.Third)
+                {
+                    movimentingPieces = this.composingCubes.FindAll(pieces => pieces.Z < 0);
+                }
+
+                foreach (var item in movimentingPieces)
+                {
+                    item.Rotate(0, 0, 90);
+                    item.Place(moviment);
+                }
+            }
+
+        }
+
+        public void Rotate(int AngleAxisX, int AngleAxisY, int AngleAxisZ)
+        {
+            this.AngleX += AngleAxisX;
+            this.AngleY += AngleAxisY;
+            this.AngleZ += AngleAxisZ;
 
         }
 
         public void Draw()
         {
-            foreach (var item in draws)
+            AdjustRotation();
+            foreach (var item in composingCubes)
             {
                 item.Draw();
             }
+        }
+
+        private void AdjustRotation()
+        {
+            //if(AngleX > 90)
+            //{
+            //    this.
+            //    this.AngleX = this.AngleX % 91;
+            //}
+
+            Gl.glRotatef(AngleX, 1, 0, 0);
+            Gl.glRotatef(AngleY, 0, 1, 0);
+            Gl.glRotatef(AngleZ, 0, 0, 1);
+
         }
     }
 }
