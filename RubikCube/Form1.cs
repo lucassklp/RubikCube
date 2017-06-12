@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,11 @@ namespace RubikCube
 {
     public partial class RubikCubeForm : Form
     {
-        Timer timer;
+        private Timer timer;
 
-        RubiksCube rubiksCube;
+        private RubiksCube rubiksCube;
+        private List<Light> lights;
+
 
         public RubikCubeForm()
         {
@@ -31,6 +34,21 @@ namespace RubikCube
             OpenGlControl.Height = this.Height;
             OpenGlControl.InitializeContexts();
 
+            rubiksCube = new RubiksCube();
+            lights = new List<Light>();
+
+            var lightFront = new Light(Gl.GL_LIGHT0, new float[3] { 0.0f, 0.0f, 3f });
+            lights.Add(lightFront);
+            //var lightBack = new Light(Gl.GL_LIGHT0, new float[3] { 0f, 0f, 3f });
+            //lights.Add(lightBack);
+
+
+            this.Initialize();            
+        }
+
+        private void Initialize()
+        {
+
             Gl.glViewport(0, 0, this.Width, this.Height);
             Gl.glMatrixMode(Gl.GL_PROJECTION);
             Gl.glLoadIdentity();
@@ -38,12 +56,8 @@ namespace RubikCube
             Gl.glEnable(Gl.GL_CULL_FACE);
             Gl.glCullFace(Gl.GL_BACK);
 
-            //Gl.glClearColor()
             Gl.glClearColor(.85f, .85f, .85f, 1);
             Gl.glClear(Gl.GL_CLEAR);
-
-            rubiksCube = new RubiksCube();
-
         }
 
         private void Tick(object sender, EventArgs e)
@@ -55,30 +69,62 @@ namespace RubikCube
         {
             rubiksCube.Manipulate(moviment);
         }
-
-
+        
         private void OpenGlControl_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
+            if (e.KeyCode == Keys.D)
             {
                 rubiksCube.Rotate(0, 5, 0);
+                
             }
             else if (e.KeyCode == Keys.A)
             {
                 rubiksCube.Rotate(0, -5, 0);
+                
             }
             else if (e.KeyCode == Keys.W)
             {
                 rubiksCube.Rotate(-5, 0, 0);
+                
             }
             else if (e.KeyCode == Keys.S)
             {
                 rubiksCube.Rotate(5, 0, 0);
             }
+
+            else if(e.KeyCode == Keys.B)
+            {
+                foreach(var light in lights)
+                {
+                    light.IsAmbientLightEnabled = !light.IsAmbientLightEnabled;
+                    Debug.WriteLine("State: Ambient: {0}, Diffuse: {1}, Specular: {2} ", light.IsAmbientLightEnabled, light.IsDiffuseLightEnabled, light.IsSpecularLightEnabled);
+                }
+                
+            }
+            else if (e.KeyCode == Keys.N)
+            {
+                foreach (var light in lights)
+                {
+                    light.IsDiffuseLightEnabled = !light.IsDiffuseLightEnabled;
+                    Debug.WriteLine("State: Ambient: {0}, Diffuse: {1}, Specular: {2} ", light.IsAmbientLightEnabled, light.IsDiffuseLightEnabled, light.IsSpecularLightEnabled);
+                }
+                
+            }
+            else if (e.KeyCode == Keys.M)
+            {
+                foreach (var light in lights)
+                {
+                    light.IsSpecularLightEnabled = !light.IsSpecularLightEnabled; Debug.WriteLine("State: Ambient: {0}, Diffuse: {1}, Specular: {2} ", light.IsAmbientLightEnabled, light.IsDiffuseLightEnabled, light.IsSpecularLightEnabled);
+                }
+                
+            }
+
+
         }
 
         private void OpenGlControl_Paint(object sender, PaintEventArgs e)
         {
+            
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
 
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
@@ -92,8 +138,13 @@ namespace RubikCube
             Gl.glPolygonMode(Gl.GL_BACK, Gl.GL_LINES);
 
             Gl.glTranslated(0, 0, -5);
-
+            
             rubiksCube.Draw();
+
+            foreach(var light in this.lights)
+            {
+                light.Draw();
+            }
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)

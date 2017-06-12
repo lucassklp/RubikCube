@@ -15,7 +15,7 @@ namespace RubikCube.Draws
         public double Y { get; private set; }
         public double Z { get; private set; }
 
-        private FaceCubeColors faceColors;
+        private FaceCube<Color> faceColors;
 
         private int AngleX = 0;
         private int AngleY = 0;
@@ -28,10 +28,19 @@ namespace RubikCube.Draws
             this.X = X;
             this.Y = Y;
             this.Z = Z;
-            this.faceColors = new FaceCubeColors(Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black);
+            this.faceColors = new FaceCube(Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black);
         }
 
-        public Cube(double size, double X, double Y, double Z, FaceCubeColors faceColors)
+        public Cube(double size, double X, double Y, double Z, FaceCube<Color> faceColors)
+        {
+            this.size = size;
+            this.X = X;
+            this.Y = Y;
+            this.Z = Z;
+            this.faceColors = faceColors;
+        }
+
+        public Cube(double size, double X, double Y, double Z, FaceCube<Color> faceColors)
         {
             this.size = size;
             this.X = X;
@@ -47,9 +56,11 @@ namespace RubikCube.Draws
             this.AngleZ += AngleAxisZ;
         }
 
-
         public void Draw()
         {
+
+            Gl.glEnable(Gl.GL_TEXTURE);
+
             Gl.glPushMatrix();
             Gl.glRotatef(AngleX, 1, 0, 0);
             Gl.glRotatef(AngleY, 0, 1, 0);

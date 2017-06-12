@@ -15,7 +15,7 @@ namespace RubikCube.Draws
         Queue<Animation> pendingAnimation;
         Animation current;
 
-        int AngleX, AngleY, AngleZ;
+        public int AngleX, AngleY, AngleZ;
 
         public RubiksCube()
         {
@@ -51,9 +51,9 @@ namespace RubikCube.Draws
             }
         }
 
-        private FaceCubeColors GenerateCubeColor(double x, double y, double z)
+        private FaceCube<Color> GenerateCubeColor(double x, double y, double z)
         {
-            var cubeColor = new FaceCubeColors(Color.Green, Color.Blue, Color.White, Color.Yellow, Color.Orange, Color.Red);
+            var cubeColor = new FaceCube<Color>(Color.Green, Color.Blue, Color.White, Color.Yellow, Color.Orange, Color.Red);
 
             if (x < 0)
             {
@@ -204,16 +204,9 @@ namespace RubikCube.Draws
 
         private void AdjustRotation()
         {
-            //if(AngleX > 90)
-            //{
-            //    this.
-            //    this.AngleX = this.AngleX % 91;
-            //}
-
             Gl.glRotatef(AngleX, 1, 0, 0);
             Gl.glRotatef(AngleY, 0, 1, 0);
             Gl.glRotatef(AngleZ, 0, 0, 1);
-
         }
     }
 }
