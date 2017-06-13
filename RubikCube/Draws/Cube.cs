@@ -28,7 +28,7 @@ namespace RubikCube.Draws
             this.X = X;
             this.Y = Y;
             this.Z = Z;
-            this.faceColors = new FaceCube(Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black);
+            this.faceColors = new FaceCube<Color>(Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black);
         }
 
         public Cube(double size, double X, double Y, double Z, FaceCube<Color> faceColors)
@@ -40,13 +40,13 @@ namespace RubikCube.Draws
             this.faceColors = faceColors;
         }
 
-        public Cube(double size, double X, double Y, double Z, FaceCube<Color> faceColors)
+        public Cube(double size, double X, double Y, double Z, FaceCube<Texture> faceColors)
         {
             this.size = size;
             this.X = X;
             this.Y = Y;
             this.Z = Z;
-            this.faceColors = faceColors;
+            //this.faceColors = faceColors;
         }
 
         public void Rotate(int AngleAxisX, int AngleAxisY, int AngleAxisZ)
